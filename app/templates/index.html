@@ -1,0 +1,49 @@
+<!-- app/templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Shorts Maker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+</head>
+<body>
+    <h1>YouTube Shorts Maker</h1>
+    <form id="youtubeForm">
+        <label for="youtube_url">YouTube URL:</label>
+        <input type="text" id="youtube_url" name="youtube_url" required>
+        <button type="button" onclick="processVideo()">Generate Short</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        function processVideo() {
+            const youtubeUrl = document.getElementById('youtube_url').value;
+
+            fetch('/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'youtube_url': youtubeUrl,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.innerHTML = data.message;
+
+                if (data.success) {
+                    messageDiv.style.color = 'green';
+                } else {
+                    messageDiv.style.color = 'red';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
